@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 To-Do List - WixzDev</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Kartu utama */
+    .app-card {
+      border-radius: 25px;
+      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 600px;
+      transition: all 0.3s ease;
+    }
+
+    /* Animasi tugas baru */
+    .task-enter {
+      opacity: 0;
+      transform: translateY(15px);
+      animation: slideIn 0.3s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsif di layar besar */
+    @media (min-width: 1024px) {
+      body {
+        background: linear-gradient(135deg, #e0f0ff 0%, #cfe8ff 100%);
+      }
+
+      .app-card {
+        transform: scale(1.1);
+      }
+
+      h1, h2, p {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-start text-gray-800">
+
+  <!-- Header -->
+  <header class="w-full max-w-2xl flex justify-between items-center px-6 py-4">
+    <a href="index.html" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition flex items-center gap-2">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+  </header>
+
+  <!-- Nama dan Judul -->
+  <div class="text-center mb-6">
+    <h2 class="text-2xl font-semibold text-blue-700 tracking-wide">
+      WixzDev<span class="text-blue-500">.</span>
+    </h2>
+
+    <p class="text-black text-2xl md:text-3xl font-bold mt-3 tracking-wide">
+      My Project
+    </p>
+
+    <h1 class="text-3xl md:text-4xl font-bold text-blue-600 mt-2">
+      📝 To-Do List
+    </h1>
+  </div>
+
+  <!-- App -->
+  <main class="flex-grow flex items-start justify-center px-4">
+    <div class="bg-white shadow-2xl app-card rounded-3xl p-8 w-full">
+      <div class="flex mb-4">
+        <input id="taskInput" type="text" placeholder="Tulis tugas baru..."
+          class="flex-grow p-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-400 outline-none text-base">
+        <button id="addTaskBtn"
+          class="bg-blue-500 text-white px-5 text-base rounded-r-lg hover:bg-blue-600 transition whitespace-nowrap">Tambah</button>
+      </div>
+
+      <ul id="taskList" class="space-y-3"></ul>
+
+      <div class="text-center mt-6 text-gray-500 text-sm">
+        💾 Tugas disimpan otomatis di browser kamu
+      </div>
+    </div>
+  </main>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="footer-text">© 2025 WixzzNT. All rights reserved.</p>
+        <p class="footer-text"> Created with passion and dedication</p>
+        <div class="footer-social">
+            <a href="https://www.instagram.com/wixzz404?igsh=OWthcDBucHB5NnU=" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://github.com/WixzzNT" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+    const taskList = document.getElementById("taskList");
+
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = "flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm task-enter";
+
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        span.className = `flex-grow cursor-pointer ${task.done ? "line-through text-gray-400" : "text-gray-700"}`;
+        span.onclick = () => toggleTask(index);
+
+        const delBtn = document.createElement("button");
+        delBtn.innerHTML = "🗑️";
+        delBtn.className = "ml-3 text-red-500 hover:text-red-700 transition";
+        delBtn.onclick = () => deleteTask(index);
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        taskList.appendChild(li);
+      });
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text === "") return;
+      tasks.push({ text, done: false });
+      taskInput.value = "";
+      renderTasks();
+    }
+
+    function toggleTask(index) {
+      tasks[index].done = !tasks[index].done;
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    addTaskBtn.addEventListener("click", addTask);
+    taskInput.addEventListener("keypress", e => { if (e.key === "Enter") addTask(); });
+
+    renderTasks();
+  </script>
+</body>
+</html>
